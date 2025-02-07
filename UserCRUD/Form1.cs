@@ -17,43 +17,62 @@ namespace UserCRUD
             feltolt();
         }
 
-        private Connect conn = new Connect();
+        public Connect conn = new Connect();
         public static int userId = 0;
 
         private void button1_Click(object sender, System.EventArgs e)
         {
-            string[] darabol = textBox1.Text.Split(' ');
+            try
+            {
+                string[] darabol = textBox1.Text.Split(' ');
 
-            if (beleptet(darabol[1], darabol[0], textBox2.Text) == true)
-            {
-                MessageBox.Show("Regisztrált tag.");
+                if (beleptet(darabol[1], darabol[0], textBox2.Text) == true)
+                {
+                    MessageBox.Show("Regisztrált tag.");
+                    Form2 form2 = new Form2();
+                    form2.Show();
+                    form2.Controls.Add(this.listBox1);
+                    this.Hide();
+                }
+                else if(radioButton3.Checked)
+                {
+                    Exception ex = new Exception();
+                    MessageBox.Show("Nem regisztrált tag.");
+                    showReg();
+                    string[] darabol2 = textBox1.Text.Split(' ');
+                    textBox3.Text = darabol2[1];
+                    textBox4.Text = darabol2[0];
+                }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Nem regisztrált tag.");
-                showReg();
-                string[] darabol2 = textBox1.Text.Split(' ');
-                textBox3.Text = darabol2[1];
-                textBox4.Text = darabol2[0];
+                MessageBox.Show(ex.Message);
             }
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if (radioButton1.Checked == true && textBox5.Text == textBox6.Text)
+            try
             {
-                frissit(userId, textBox4.Text, textBox3.Text, textBox5.Text);
-                MessageBox.Show("Sikeres frissítés");
-                listBox1.Items.Clear();
-                feltolt();
-                hideReg();
-            }
+                if (radioButton1.Checked == true && textBox5.Text == textBox6.Text)
+                {
+                    frissit(userId, textBox4.Text, textBox3.Text, textBox5.Text);
+                    MessageBox.Show("Sikeres frissítés");
+                    listBox1.Items.Clear();
+                    feltolt();
+                    hideReg();
+                }
 
-            else if (textBox5.Text == textBox6.Text && radioButton1.Checked == false)
+                else if (textBox5.Text == textBox6.Text && radioButton1.Checked == false)
+                {
+                    MessageBox.Show(regisztral(textBox3.Text, textBox4.Text, textBox5.Text));
+                    hideReg();
+                }
+            }
+            catch (Exception ex)
             {
-                MessageBox.Show(regisztral(textBox3.Text, textBox4.Text, textBox5.Text));
-                hideReg();
-            }     
+                MessageBox.Show(ex.Message);
+            }
         }
          
         private bool beleptet(string firstName, string lastName, string pass)
@@ -90,86 +109,128 @@ namespace UserCRUD
             return result > 0 ? "Sikeres regisztráció" : "Sikertelen Regisztráció.";
         }
 
-        private void feltolt()
+        public void feltolt()
         {
-            conn.Connection.Open();
+            try
+            {
+                conn.Connection.Open();
 
-            string sql = $"SELECT `Id`,`LastName`,`FirstName`,`CreatedTime`,`UpdatedTime` FROM `data`; ";
+                string sql = $"SELECT `Id`,`LastName`,`FirstName`,`CreatedTime`,`UpdatedTime` FROM `data`; ";
 
-            MySqlCommand cmd = new MySqlCommand(sql, conn.Connection);
-            MySqlDataReader dr = cmd.ExecuteReader();
+                MySqlCommand cmd = new MySqlCommand(sql, conn.Connection);
+                MySqlDataReader dr = cmd.ExecuteReader();
 
-            while (dr.Read()) 
-            { 
-                listBox1.Items.Add($"{dr.GetInt32(0)}. {dr.GetString(1)} {dr.GetString(2)} {dr.GetDateTime(3).ToString("yyyy-MM-dd")} {dr.GetDateTime(4).ToString("yyy-MM-dd")}");
+                while (dr.Read())
+                {
+                    listBox1.Items.Add($"{dr.GetInt32(0)}. {dr.GetString(1)} {dr.GetString(2)} {dr.GetDateTime(3).ToString("yyyy-MM-dd")} {dr.GetDateTime(4).ToString("yyy-MM-dd")}");
+                }
+
+                conn.Connection.Close();
             }
-
-            conn.Connection.Close();
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void hideReg()
         {
-            label3.Visible = label4.Visible = label5.Visible = label6.Visible = false;
-            textBox3.Visible = textBox4.Visible = textBox5.Visible = textBox6.Visible = false;
-            button2.Visible = false;
+            try
+            {
+                label3.Visible = label4.Visible = label5.Visible = label6.Visible = false;
+                textBox3.Visible = textBox4.Visible = textBox5.Visible = textBox6.Visible = false;
+                button2.Visible = false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void showReg()
         {
-            label3.Visible = label4.Visible = label5.Visible = label6.Visible = true;
-            textBox3.Visible = textBox4.Visible = textBox5.Visible = textBox6.Visible = true;
-            button2.Visible = true;
+            try
+            {
+                label3.Visible = label4.Visible = label5.Visible = label6.Visible = true;
+                textBox3.Visible = textBox4.Visible = textBox5.Visible = textBox6.Visible = true;
+                button2.Visible = true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void listBox1_DoubleClick(object sender, EventArgs e)
         {
-            if (radioButton2.Checked == true)
+            try
             {
-                string id = listBox1.SelectedItem.ToString();
-                string[] idDarabol = id.Split('.');
+                if (radioButton2.Checked == true)
+                {
+                    string id = listBox1.SelectedItem.ToString();
+                    string[] idDarabol = id.Split('.');
 
+                    conn.Connection.Open();
+
+                    string sql = $"DELETE FROM `data` WHERE `Id`= '{idDarabol[0]}'";
+
+                    MySqlCommand cmd = new MySqlCommand(sql, conn.Connection);
+
+                    var result = cmd.ExecuteNonQuery();
+
+                    conn.Connection.Close();
+
+                    listBox1.Items.Clear();
+                    feltolt();
+                }
+
+                else
+                {
+                    showReg();
+                    string[] darabol = listBox1.SelectedItem.ToString().Split(' ');
+                    textBox4.Text = darabol[1];
+                    textBox3.Text = darabol[2];
+
+                    string[] darabol2 = listBox1.SelectedItem.ToString().Split(' ');
+                    userId = int.Parse(darabol2[0].TrimEnd());
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void frissit(int Id, string FirstName, string LastName, string Password)
+        {
+            try
+            {
                 conn.Connection.Open();
 
-                string sql = $"DELETE FROM `data` WHERE `Id`= '{idDarabol[0]}'";
+                string sql = $"UPDATE `data` SET `FirstName`='{FirstName}',`LastName`='{LastName}',`Password`='{Password}' WHERE `Id` = '{Id}'";
 
                 MySqlCommand cmd = new MySqlCommand(sql, conn.Connection);
 
                 var result = cmd.ExecuteNonQuery();
 
                 conn.Connection.Close();
-
-                listBox1.Items.Clear();
-                feltolt();
             }
-
-            else
+            catch (Exception ex)
             {
-                showReg();
-                string[] darabol = listBox1.SelectedItem.ToString().Split(' ');
-                textBox4.Text = darabol[1];
-                textBox3.Text = darabol[2];
-
-                string[] darabol2 = listBox1.SelectedItem.ToString().Split(' ');
-                userId = int.Parse(darabol2[0].TrimEnd());
+                MessageBox.Show(ex.Message);
             }
-        }
-
-        private void frissit(int Id, string FirstName, string LastName, string Password)
-        {
-            conn.Connection.Open();
-
-            string sql = $"UPDATE `data` SET `FirstName`='{FirstName}',`LastName`='{LastName}',`Password`='{Password}' WHERE `Id` = '{Id}'";
-
-            MySqlCommand cmd = new MySqlCommand(sql, conn.Connection);
-
-            var result = cmd.ExecuteNonQuery();
-
-            conn.Connection.Close();
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            this.Close();
+            try
+            {
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }

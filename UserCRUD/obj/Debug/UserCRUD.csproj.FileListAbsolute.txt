@@ -170,3 +170,4 @@ C:\Users\vecseizs\source\repos\userCrud\UserCRUD\obj\Debug\UserCRUD.csproj.CoreC
 C:\Users\vecseizs\source\repos\userCrud\UserCRUD\obj\Debug\UserCRUD.csproj.Up2Date
 C:\Users\vecseizs\source\repos\userCrud\UserCRUD\obj\Debug\UserCRUD.exe
 C:\Users\vecseizs\source\repos\userCrud\UserCRUD\obj\Debug\UserCRUD.pdb
+C:\Users\vecseizs\source\repos\userCrud\UserCRUD\obj\Debug\UserCRUD.Form2.resources
