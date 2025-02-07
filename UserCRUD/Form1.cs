@@ -191,7 +191,7 @@ namespace UserCRUD
                     textBox4.Text = darabol[1];
                     textBox3.Text = darabol[2];
 
-                    string[] darabol2 = listBox1.SelectedItem.ToString().Split(' ');
+                    string[] darabol2 = listBox1.SelectedItem.ToString().Split('.');
                     userId = int.Parse(darabol2[0].TrimEnd());
                 }
             }
